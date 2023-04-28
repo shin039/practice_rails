@@ -1,0 +1,81 @@
+version: "3"
+services:
+  # ----------------------------------------------------------------------------
+  # Dababase
+  # ----------------------------------------------------------------------------
+  db:
+    # コンテナ名の指定
+    container_name: practice_rails_db
+    # イメージの指定
+    image: mysql:8
+    # データの永続化（ホスト側のtmp/dbディレクトリにマウントする）
+    # 環境変数の指定（初期設定値）
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+      - ./db/logs:/var/log/mysql
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+  # ----------------------------------------------------------------------------
+  # Backend
+  #   -> docker compose build backend した後に、
+  #      docker compose run backend bash でログインして、
+  #      rails new . --api -d mysql　の実行など。
+  #      (参照)https://qiita.com/shungo_m/items/5ebd1c87379111e0d524
+  #
+  #      起動後、
+  #      confog/database.ymlを編集
+  #      docker compose run backend rails db:create
+  #
+  #      (例) modelを作成するなど
+  #      docker compose run backend rails d model journal title:text content:text
+  #      docker compose run backend rails db:migrate
+  # ----------------------------------------------------------------------------
+  backend:
+    # コンテナ名の指定
+    container_name: practice_rails_backend
+    build:
+      context: ./backend
+      args:
+        - BE_RB_VER=${BE_RB_VER}
+        - BE_APP_PATH=${BE_APP_PATH}
+    command: sh -c "rm ${BE_APP_PATH}/tmp/pids/server.pid; bundle install && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./backend:${BE_APP_PATH}
+    working_dir: ${BE_APP_PATH}
+    ports:
+      - "3010:3000"
+    depends_on:
+      - db
+
+  # ----------------------------------------------------------------------------
+  # Front
+  #   -> docker compose build frontend した後に、
+  #      docker compose run frontend bash でログインして、
+  #      npm i -g create-react-app と
+  #      create-react-app XXXX　して、
+  #      ${FE_APP_PATH} 配下にアプリを設定する。
+  # ----------------------------------------------------------------------------
+  front:
+    # コンテナ名の指定
+    container_name: practice_rails_frontend
+    build:
+      context: ./frontend
+      args:
+        - FE_NODE_VER=${FE_NODE_VER}
+        - FE_APP_PATH=${FE_APP_PATH}
+    command: npm start
+    volumes:
+      - ./frontend:${FE_APP_PATH}
+    environment:
+      # Reactのホットリロード
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      # WEBSocketのエラーを消す
+      - WDS_SOCKET_PORT=0
+    working_dir: ${FE_APP_PATH}
+    ports:
+      - "3020:3000"

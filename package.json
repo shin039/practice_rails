@@ -1,0 +1,20 @@
+{
+  "name": "practice_rails",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build"   : "docker-compose build",
+    "start"   : "docker-compose up -d",
+    "stop"    : "docker-compose  down",
+    "startbe" : "docker compose up backend -d",
+    "logs"    : "docker compose logs -f",
+    "none"    : "-----------------------------------",
+    "loginweb": "docker compose exec backend bash",
+    "logindb" : "docker exec -it postgresql bash",
+    "cleandb" : "npm run stopdb && rm -rf docker/.pgsql_data"
+  },
+  "author": "",
+  "license": "ISC"
+}
