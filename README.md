@@ -1,4 +1,4 @@
 # practice_rails
 For lean rails....
-test
+main
 pullrequest
