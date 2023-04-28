@@ -1,2 +1,2 @@
 # practice_rails
-For lean rails..
+For lean rails...
