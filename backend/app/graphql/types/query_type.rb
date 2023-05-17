@@ -13,21 +13,21 @@ module Types
     field :test_field, String, null: false,
       description: "An example field added by the generator"
     def test_field
-      "Hello World!"
+      str_hello = "Hello World by Query."
+      # str_hello unless true # unless -> falseの時に実行する
+      method_test(str_hello) if true
     end
 
-    field :name, String, null: false,
-      description: "This is Test"
+    # private method
+    def method_test (msg) "It's Method Test =>  #{msg}" end
 
-    def name() "This is Test" end
+    field :name, String, null: false, description: "This is Test"
+    def name() "This is Test." end
 
     # --------------------------------------------------------------------------
     # Users
     # --------------------------------------------------------------------------
-    field :user, Types::UserType, null: true do
-      argument :id, ID, required: true
-    end
-
+    field :user, Types::UserType, null: true do argument :id, ID, required: true end
     def user(id:) User.find(id) end
 
     field :users, [Types::UserType], null: false

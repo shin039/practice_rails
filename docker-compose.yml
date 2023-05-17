@@ -11,7 +11,8 @@ services:
     # データの永続化（ホスト側のtmp/dbディレクトリにマウントする）
     # 環境変数の指定（初期設定値）
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Tokyo
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - ./db/mysql:/var/lib/mysql
@@ -48,6 +49,8 @@ services:
     working_dir: ${BE_APP_PATH}
     ports:
       - "3010:3000"
+    environment:
+      - TZ=Asia/Tokyo
     depends_on:
       - db
 
@@ -76,6 +79,7 @@ services:
       - WATCHPACK_POLLING=true
       # WEBSocketのエラーを消す
       - WDS_SOCKET_PORT=0
+      - TZ=Asia/Tokyo
     working_dir: ${FE_APP_PATH}
     ports:
       - "3020:3000"
