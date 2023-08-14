@@ -1,0 +1,46 @@
+version: "3"
+services:
+  # ----------------------------------------------------------------------------
+  # Dababase
+  # ----------------------------------------------------------------------------
+  db:
+    # コンテナ名の指定
+    container_name: practice_rails_db
+    # イメージの指定
+    image: mysql:8
+    # データの永続化（ホスト側のtmp/dbディレクトリにマウントする）
+    # 環境変数の指定（初期設定値）
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Tokyo
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+      - ./db/logs:/var/log/mysql
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+  # ----------------------------------------------------------------------------
+  # Web
+  #   -> docker compose run --no-deps web rails new . --force -d mysql
+  #   -> docker compose run --no-deps web rails webpakcer:install
+  #   https://qiita.com/guri_tech/items/f870ff52dce3a39e2d23
+  # ----------------------------------------------------------------------------
+  web:
+    # コンテナ名の指定
+    container_name: practice_rails_web
+    build:
+      context: ./web
+      args:
+        - BE_RB_VER=${BE_RB_VER}
+        - BE_APP_PATH=${BE_APP_PATH}
+    command: sh -c "rm -rf ${BE_APP_PATH}/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./web:${BE_APP_PATH}
+    working_dir: ${BE_APP_PATH}
+    ports:
+      - "3010:3000"
+    environment:
+      - TZ=Asia/Tokyo
+    depends_on:
+      - db

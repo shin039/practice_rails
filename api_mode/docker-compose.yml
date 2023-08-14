@@ -28,7 +28,7 @@ services:
   #      (参照)https://qiita.com/shungo_m/items/5ebd1c87379111e0d524
   #
   #      起動後、
-  #      confog/database.ymlを編集
+  #      config/database.ymlを編集
   #      docker compose run backend rails db:create
   #
   #      (例) modelを作成するなど
