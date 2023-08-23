@@ -3,8 +3,7 @@ class CreateBooks < ActiveRecord::Migration[6.0]
     create_table :books do |t|
       t.string :name
       t.date :published_on
-      t.string :price
-      t.string :integer
+      t.integer :price
 
       t.timestamps
     end
