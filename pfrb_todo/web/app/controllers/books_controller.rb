@@ -22,10 +22,18 @@ class BooksController < ApplicationController
   # ----------------------------------------------------------------------------
   # Controller Method
   # ----------------------------------------------------------------------------
+  #def show
+  #  render :show
+  #end
+  # ↓と同じ意味
+  #def show
+  #end
+
   def show
     respond_to do |format|
       format.html
-      format.json
+      format.json { render json: @book }
+      format.xml { redirect_to "/" }
     end
   end
 
